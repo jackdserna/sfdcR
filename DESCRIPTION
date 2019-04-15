@@ -1,0 +1,12 @@
+Package: sfdcR
+Type: Package
+Title: User Friendly R Interface to Salesforce
+Version: 0.1.0
+Imports: data.table, dplyr, keyring, RForcecom, svDialogs
+Author: Jack Serna
+Maintainer: Jack Serna <jackdseran@gmail.com>
+Description: Metadata and database application tools
+License: GNUv3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/jackdserna/sfdcR
