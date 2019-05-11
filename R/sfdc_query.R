@@ -87,10 +87,10 @@ sfdc_query<- function(session, object = NULL, query = NULL) {
             switch(type,
                    "picklist" = picklistValue(fields, filterBy, type, filterTitle),
                    "multipicklist"  = picklistValue(fields, filterBy, type, filterTitle),
-                   "date",
-                   "datetime",
-                   "boolean",
-                   "string",
+                   "date" = dateValue(),
+                   "datetime" = dateValue(),
+                   "boolean" = boolean(),
+                   "string" = string(),
                    stop(paste("Filtering on", type, "field types are not supported")))
             # Depending on field type, use specific filter signs and values
             filter.sign<- dlg_list(filter.signs,
