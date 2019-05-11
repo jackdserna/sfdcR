@@ -77,7 +77,7 @@ sfdc_query<- function(session, object = NULL, query = NULL) {
                                             object = "RecordType",
                                             query = "SELECT Id, Name FROM RecordType")
       }
-      while(filter != "no") {
+      while(filter != "no") { # while still filtering, loop filter entry form
             filterBy<- fields[fields$label %in%
                                   dlg_list(arrange(fields, label)$label,
                                            title = filterTitle,
