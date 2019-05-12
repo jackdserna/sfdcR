@@ -1,15 +1,18 @@
 sfdc_login<- function(reset = NULL){
-  if(suppressWarnings(nrow(key_list("sfdc"))) == 0 || isTRUE(reset)) {
+  if(nrow(key_list(keyring = "sfdc")) == 0 || isTRUE(reset)) {
     if(isTRUE(reset)){
       # Do stuff for new password set up
-      suppressWarnings(key_delete("sfdc", username = key_list("sfdc")[1,2]))
+      key_delete(keyring = "sfdc",
+                 username = key_list(keyring = "sfdc")[1,2],
+                 serivce = key_list(keyring = "sfdc")[1,1])
     }
     ### Set up
     dlg_message(message = "SFDC set-up: R login via Salesforce API")
     username = dlg_input("Enter a Salesforce username", Sys.info()["user"])$res
     # Validate username
     isValidEmail <- function(x) {
-      grepl("\\<[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\>", as.character(x), ignore.case=TRUE)
+      grepl("\\<[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\>",
+            as.character(x), ignore.case = TRUE)
     }
     if(isFALSE(isValidEmail(username))) stop("Enter a valid username")
     # Prompt for password information
@@ -32,20 +35,24 @@ sfdc_login<- function(reset = NULL){
     dlg_message("You will be asked to provide the Salesfoce domain instance URL")
     instance<- dlg_input("Copy the home page URL (e.g.: https://na85.salesforce.com/ )",
                     Sys.info()["user"])$res
-    if(isFALSE(RCurl::url.exists(instance))) stop("Check your Instance in the Company Profile")
+    if(isFALSE(RCurl::url.exists(instance))) {
+      stop("Check your Instance in the Company Profile")
+    }
     # Save
-    suppressWarnings(key_set_with_value(service = "sfdc",
+    dlg_message(paste("A keyring will be created to encrypt your user-password.",
+                      "Please enter a supplementary password for the keyring itself."))
+    keyring_create(keyring = "sfdc")
+    key_set_with_value(service = instance,
                        username = username,
                        password = password,
-                       keyring = instance))
-    suppressWarnings(key_set_with_value("instance",
-                                        username = instance,
-                                        password = ""))
+                       keyring = "sfdc")
+    rm(list = ls())
   }
   # Login to Salesforce API
-  session<- rforcecom.login(username = suppressWarnings(key_list("sfdc")[1,2]),
-                            password = suppressWarnings(key_get("sfdc",
-                                               username = key_list("sfdc")[1,2])),
-                            loginURL = suppressWarnings(key_list("instance")[1,2]))
+  session<- rforcecom.login(username = key_list(keyring = "sfdc")[1,2],
+                            password = key_get(keyring = "sfdc",
+                                               username = key_list(keyring = "sfdc")[1,2],
+                                               service = key_list(keyring = "sfdc")[1,1]),
+                            loginURL = key_list(keyring = "sfdc")[1,1])
   return(session)
 }
