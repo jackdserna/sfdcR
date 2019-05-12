@@ -49,10 +49,10 @@ sfdc_login<- function(reset = NULL){
     rm(list = ls())
   }
   # Login to Salesforce API
-  session<- rforcecom::rforcecom.login(username = keyring::key_list(keyring = "sfdc")[1,2],
+  session<- RForcecom::rforcecom.login(username = keyring::key_list(keyring = "sfdc")[1,2],
                             password = keyring::key_get(keyring = "sfdc",
                                                username = keyring::key_list(keyring = "sfdc")[1,2],
                                                service = keyring::key_list(keyring = "sfdc")[1,1]),
                             loginURL = keyring::key_list(keyring = "sfdc")[1,1])
-  return(session)
+  session
 }
