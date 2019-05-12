@@ -1,14 +1,14 @@
 sfdc_login<- function(reset = NULL){
-  if(nrow(key_list(keyring = "sfdc")) == 0 || isTRUE(reset)) {
+  if(nrow(keyring::key_list(keyring = "sfdc")) == 0 || isTRUE(reset)) {
     if(isTRUE(reset)){
       # Do stuff for new password set up
-      key_delete(keyring = "sfdc",
+      keyring::key_delete(keyring = "sfdc",
                  username = key_list(keyring = "sfdc")[1,2],
                  serivce = key_list(keyring = "sfdc")[1,1])
     }
     ### Set up
-    dlg_message(message = "SFDC set-up: R login via Salesforce API")
-    username = dlg_input("Enter a Salesforce username", Sys.info()["user"])$res
+    svDialogs::dlg_message(message = "SFDC set-up: R login via Salesforce API")
+    username = svDialogs::dlg_input("Enter a Salesforce username", Sys.info()["user"])$res
     # Validate username
     isValidEmail <- function(x) {
       grepl("\\<[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\>",
@@ -16,43 +16,43 @@ sfdc_login<- function(reset = NULL){
     }
     if(isFALSE(isValidEmail(username))) stop("Enter a valid username")
     # Prompt for password information
-    dlg_message(paste("You will be asked for your Salesforce password.",
+    svDialogs::dlg_message(paste("You will be asked for your Salesforce password.",
                       "This information will be saved securely saved via the keyring package."))
-    pw = dlg_input(message = "Enter a password associated with the sfdc username",
+    pw = svDialogs::dlg_input(message = "Enter a password associated with the sfdc username",
                      Sys.info()["user"])$res
-    dlg_message(paste("You will be asked for your Salesforce API token.",
+    svDialogs::dlg_message(paste("You will be asked for your Salesforce API token.",
                       "Salesforce automatically sends a random generated token via email.",
                       "To find it, login to Salesforce in web browser.",
                       "Go to 'My Settings'.",
                       "Go to 'Personal', then 'Reset My Security Token' and reset.",
                       "Copy the API token, and be ready to paste.", sep = " \n"))
-    token = dlg_input(message = "Enter the API token",
+    token = svDialogs::dlg_input(message = "Enter the API token",
                       Sys.info()["user"])$res
     token = trimws(token)
     if(nchar(token) < 24 || nchar(token) > 25) stop("Be sure to copy and paste all of the token")
     password = paste0(pw, token)
     # Enter Instance URL
-    dlg_message("You will be asked to provide the Salesfoce domain instance URL")
+    svDialogs::dlg_message("You will be asked to provide the Salesfoce domain instance URL")
     instance<- dlg_input("Copy the home page URL (e.g.: https://na85.salesforce.com/ )",
                     Sys.info()["user"])$res
     if(isFALSE(RCurl::url.exists(instance))) {
       stop("Check your Instance in the Company Profile")
     }
     # Save
-    dlg_message(paste("A keyring will be created to encrypt your user-password.",
+    svDialogs::dlg_message(paste("A keyring will be created to encrypt your user-password.",
                       "Please enter a supplementary password for the keyring itself."))
-    keyring_create(keyring = "sfdc")
-    key_set_with_value(service = instance,
+    keyring::keyring_create(keyring = "sfdc")
+    keyring::key_set_with_value(service = instance,
                        username = username,
                        password = password,
                        keyring = "sfdc")
     rm(list = ls())
   }
   # Login to Salesforce API
-  session<- rforcecom.login(username = key_list(keyring = "sfdc")[1,2],
-                            password = key_get(keyring = "sfdc",
-                                               username = key_list(keyring = "sfdc")[1,2],
-                                               service = key_list(keyring = "sfdc")[1,1]),
-                            loginURL = key_list(keyring = "sfdc")[1,1])
+  session<- rforcecom::rforcecom.login(username = keyring::key_list(keyring = "sfdc")[1,2],
+                            password = keyring::key_get(keyring = "sfdc",
+                                               username = keyring::key_list(keyring = "sfdc")[1,2],
+                                               service = keyring::key_list(keyring = "sfdc")[1,1]),
+                            loginURL = keyring::key_list(keyring = "sfdc")[1,1])
   return(session)
 }
