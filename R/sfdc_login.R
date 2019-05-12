@@ -3,8 +3,8 @@ sfdc_login<- function(reset = NULL){
     if(isTRUE(reset)){
       # Do stuff for new password set up
       keyring::key_delete(keyring = "sfdc",
-                 username = key_list(keyring = "sfdc")[1,2],
-                 serivce = key_list(keyring = "sfdc")[1,1])
+                 username = kayring::key_list(keyring = "sfdc")[1,2],
+                 serivce = keyring::key_list(keyring = "sfdc")[1,1])
     }
     ### Set up
     svDialogs::dlg_message(message = "SFDC set-up: R login via Salesforce API")
