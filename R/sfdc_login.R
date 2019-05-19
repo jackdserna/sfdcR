@@ -6,6 +6,7 @@ sfdc_login<- function(reset = NULL){
         keyring = "sfdc",
         username = keyring::key_list(keyring = "sfdc")[1,2],
         service = keyring::key_list(keyring = "sfdc")[1,1])
+      keyring::key_delete(keyring = "sfdc")
     }
     ### Set up
     svDialogs::dlg_message(
