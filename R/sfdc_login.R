@@ -46,7 +46,7 @@ sfdc_login<- function(reset = NULL){
     # Enter Instance URL
     svDialogs::dlg_message(
       "You will be asked to provide the Salesfoce domain instance URL")
-    instance<- dlg_input(
+    instance<- svDialogs::dlg_input(
       "Copy the home page URL (e.g.: https://na85.salesforce.com/ )",
       Sys.info()["user"])$res
     if(isFALSE(RCurl::url.exists(instance))) {
