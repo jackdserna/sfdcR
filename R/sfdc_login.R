@@ -4,8 +4,8 @@ sfdc_login<- function(reset = NULL){
       # Do stuff for new password set up
       keyring::key_delete(
         keyring = "sfdc",
-        username = kayring::key_list(keyring = "sfdc")[1,2],
-        serivce = keyring::key_list(keyring = "sfdc")[1,1])
+        username = keyring::key_list(keyring = "sfdc")[1,2],
+        service = keyring::key_list(keyring = "sfdc")[1,1])
     }
     ### Set up
     svDialogs::dlg_message(
@@ -49,13 +49,13 @@ sfdc_login<- function(reset = NULL){
     instance<- svDialogs::dlg_input(
       "Copy the home page URL (e.g.: https://na85.salesforce.com/ )",
       Sys.info()["user"])$res
-    if(isFALSE(RCurl::url.exists(instance))) {
-      stop("Check your Instance in the Company Profile")
+    if(!grepl("https://", instance)) {
+      stop("Include https:// in your Company Profile Instance")
     }
     # Save
     svDialogs::dlg_message(paste(
-      "A keyring will be created to encrypt your user-password.",
-      "Linux users please enter a supplementary password for the keyring."))
+      "A keyring will be created to encrypt your encrypted user-password.",
+      "Please enter a supplementary password for the keyring."))
     keyring::keyring_create(keyring = "sfdc")
     keyring::key_set_with_value(
       service = instance,
