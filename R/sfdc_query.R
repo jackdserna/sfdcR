@@ -12,8 +12,10 @@ sfdc_query<- function(session, object = NULL, query = NULL) {
       fields = rforcecom.getObjectDescription(session, object)
       fields[] = lapply(fields, as.character)
       query = fields[
-         (fields$label %in% dlg_list(fields$label, multiple = TRUE,
-                  title = "Select the field(s) to pull", Sys.info()["user"])$res),
+         fields$label %in% dlg_list(
+            fields$label, multiple = TRUE,
+            title = "Select the field(s) to pull",
+            Sys.info()["user"])$res,
          "name"]
       # Get field types to allow for smart querying
       type <- fields[fields$name %in% query, "type"]
@@ -46,34 +48,21 @@ sfdc_query<- function(session, object = NULL, query = NULL) {
       })
    }
    # 3 Filter, if desired?
-   filter<- dlg_message("yesno",
-   message = "Do you want to filter?",
-   Sys.info()["user"])$res
+   filter<- svDialogs::dlg_message(
+      type = "yesno",
+      message = "Do you want to filter?",
+      Sys.info()["user"])$res
+   # If yes, define basics
    if(filter == "yes") {
-      filter.signs<- c('=', '!=', '<', '<=', '>', '>=', 'LIKE',
-      "IN", 'NOT IN', 'INCLUDES', 'EXCLUDES')
-      dateLiterals<- c(
-         'YESTERDAY', 'TODAY', 'TOMORROW', 'LAST_WEEK', 'THIS_WEEK', 'NEXT_WEEK',
-         'LAST_MONTH', 'THIS_MONTH', 'NEXT_MONTH', 'LAST_90_DAYS', 'NEXT_90_DAYS',
-         'THIS_QUARTER', 'LAST_QUARTER', 'NEXT_QUARTER', 'THIS_YEAR', 'LAST_YEAR',
-         'NEXT_YEAR', 'THIS_FISCAL_QUARTER', 'LAST_FISCAL_QUARTER',
-         'NEXT_FISCAL_QUARTER', 'THIS_FISCAL_YEAR', 'LAST_FISCAL_YEAR',
-         'NEXT_FISCAL_YEAR', 'null')
-      dateInput<- c(
-         'LAST_N_DAYS:', 'NEXT_N_DAYS:', 'NEXT_N_WEEKS:', 'LAST_N_WEEKS:',
-         'NEXT_N_MONTHS:', 'LAST_N_MONTHS:', 'NEXT_N_QUARTERS:', 'LAST_N_QUARTERS:',
-         'NEXT_N_YEARS:', 'LAST_N_YEARS:', 'NEXT_N_FISCAL_QUARTERS:',
-         'LAST_N_FISCAL_QUARTERS:', 'NEXT_N_FISCAL_YEARS:', 'LAST_N_FISCAL_YEARS:')
-      dateRange <- "Custom Date Range"
-      dateCustom<- "Custom Date"
       filterList<- "WHERE"
       filterTitle = paste("Filter Logic:", filterList)
+      # Necessary? Or get relationship?
       recordTypeIds<- sfdc_basicQuery(
          session,
          object = "RecordType",
          query = "SELECT Id, Name FROM RecordType")
    }
-   while(filter != "no") { # while still filtering, loop filter entry form
+   while(filter != "no") { # while filtering, loop filter entry form
       filterBy<- fields[fields$label %in%
       dlg_list(arrange(fields, label)$label,
       title = filterTitle,
