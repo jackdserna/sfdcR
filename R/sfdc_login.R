@@ -1,11 +1,12 @@
 sfdc_login<- function(reset = NULL){
   if(nrow(keyring::key_list(keyring = "sfdc")) == 0 || isTRUE(reset)) {
     if(isTRUE(reset)){
-      # Do stuff for new password set up
+      # Delete old key for new password set up
       keyring::key_delete(
         keyring = "sfdc",
         username = keyring::key_list(keyring = "sfdc")[1,2],
         service = keyring::key_list(keyring = "sfdc")[1,1])
+      keyring::keyring_delete(keyring = "sfdc")
     }
     ### Set up
     svDialogs::dlg_message(
