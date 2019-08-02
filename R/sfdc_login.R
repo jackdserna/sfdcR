@@ -6,7 +6,6 @@ sfdc_login<- function(reset = NULL){
         keyring = "sfdc",
         username = keyring::key_list(keyring = "sfdc")[1,2],
         service = keyring::key_list(keyring = "sfdc")[1,1])
-      keyring::key_delete(keyring = "sfdc")
     }
     ### Set up
     svDialogs::dlg_message(
@@ -23,7 +22,7 @@ sfdc_login<- function(reset = NULL){
     # Prompt for password information
     svDialogs::dlg_message(paste(
       "You will be asked for your Salesforce password.",
-      "This information will be saved securely saved",
+      "This information will be saved securely",
       "via the keyring package."))
     pw = svDialogs::dlg_input(
       message = "Enter a password associated with the sfdc username",
@@ -55,7 +54,7 @@ sfdc_login<- function(reset = NULL){
     }
     # Save
     svDialogs::dlg_message(paste(
-      "A keyring will be created to encrypt your encrypted user-password.",
+      "A keyring will be created to encrypt your user-password.",
       "Please enter a supplementary password for the keyring."))
     keyring::keyring_create(keyring = "sfdc")
     keyring::key_set_with_value(
